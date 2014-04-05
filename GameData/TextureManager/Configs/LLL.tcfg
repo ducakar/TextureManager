@@ -1,0 +1,6 @@
+config_enabled = true
+NORMAL_LIST
+{
+	texture = LLL/Parts/Structural/LLLWindowCircularWalkway/model001
+	texture = LLL/Parts/Structural/LLL2x1Hull/HullNorm
+}
