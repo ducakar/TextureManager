@@ -31,7 +31,7 @@ namespace TextureManager
 {
   class Converter
   {
-    const int MAX_IMAGE_SIZE = 4048 * 4048 * 5;
+    const int MAX_IMAGE_SIZE = 4096 * 4096 * 5;
     byte[] imageBuffer = null;
     public static Converter instance = null;
 
@@ -48,10 +48,10 @@ namespace TextureManager
       imageBuffer = null;
     }
 
-    public void Resize(GameDatabase.TextureInfo texture, int width, int height, bool mipmaps,
-                       bool convertToNormalFormat)
+    public static void Resize(GameDatabase.TextureInfo texture, int width, int height, bool mipmaps,
+                              bool convertToNormalFormat)
     {
-      Util.debugLog(this, "Resizing...");
+      Util.debugLog("Resizing...");
       Texture2D tex = texture.texture;
       TextureFormat format = tex.format;
       if (texture.isNormalMap)
@@ -316,6 +316,7 @@ namespace TextureManager
       imgStream.Close();
 
       Texture2D tex = texture.texture;
+      tex.mipMapBias = 0;
       tex.LoadImage(imageBuffer);
       bool convertToNormalFormat = texture.isNormalMap && !isNormalFormat ? true : false;
       bool hasMipmaps = tex.mipmapCount == 1 ? false : true;
@@ -467,7 +468,7 @@ namespace TextureManager
       }
       else
       {
-        Util.debugLog(this, "TGA format is not supported!");
+        Util.debugLog("TGA format is not supported!");
       }
 
       if (Texture.needsResize)

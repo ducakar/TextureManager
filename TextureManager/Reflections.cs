@@ -28,9 +28,9 @@ using UnityEngine;
 
 namespace TextureManager
 {
-  class Reflections
+  internal class Reflections
   {
-    private static readonly string DIR_ENVMAP = Util.DIR + "EnvMap/";
+    public static readonly string DIR_ENVMAP = Util.DIR + "EnvMap/";
     // Reflective shader material.
     private Material shaderMaterial = null;
     // Visor reflection feature.
@@ -59,7 +59,7 @@ namespace TextureManager
         string[] components = Util.splitConfigValue(sVisorReflectionColour);
         if (components.Length != 3)
         {
-          Util.log(this, "visorReplectionColour must have exactly 3 components");
+          Util.log("visorReplectionColour must have exactly 3 components");
         }
         else
         {
@@ -91,7 +91,7 @@ namespace TextureManager
         // the preceding texture.
         if (texture.name == lastTextureName)
         {
-          Util.log(this, "Corrupted GameDatabase! Problematic TGA? {0}", texture.name);
+          Util.log("Corrupted GameDatabase! Problematic TGA? {0}", texture.name);
         }
         else
         {
@@ -100,42 +100,42 @@ namespace TextureManager
             case "PositiveX":
             {
               envMapFaces[0] = texture;
-              Util.log(this, "Environment map +x -> {0}", texture.name);
+              Util.log("Environment map +x -> {0}", texture.name);
               break;
             }
             case "NegativeX":
             {
               envMapFaces[1] = texture;
-              Util.log(this, "Environment map -x -> {0}", texture.name);
+              Util.log("Environment map -x -> {0}", texture.name);
               break;
             }
             case "PositiveY":
             {
               envMapFaces[2] = texture;
-              Util.log(this, "Environment map +y -> {0}", texture.name);
+              Util.log("Environment map +y -> {0}", texture.name);
               break;
             }
             case "NegativeY":
             {
               envMapFaces[3] = texture;
-              Util.log(this, "Environment map -y -> {0}", texture.name);
+              Util.log("Environment map -y -> {0}", texture.name);
               break;
             }
             case "PositiveZ":
             {
               envMapFaces[4] = texture;
-              Util.log(this, "Environment map +z -> {0}", texture.name);
+              Util.log("Environment map +z -> {0}", texture.name);
               break;
             }
             case "NegativeZ":
             {
               envMapFaces[5] = texture;
-              Util.log(this, "Environment map -z -> {0}", texture.name);
+              Util.log("Environment map -z -> {0}", texture.name);
               break;
             }
             default:
             {
-              Util.log(this, "Invalid enironment map texture name {0}", texture.name);
+              Util.log("Invalid enironment map texture name {0}", texture.name);
               break;
             }
           }
@@ -147,7 +147,7 @@ namespace TextureManager
       // Generate generic reflection cube map texture.
       if (envMapFaces.Any(t => t == null))
       {
-        Util.log(this, "Some environment map faces are missing. Reflections disabled.");
+        Util.log("Some environment map faces are missing. Reflections disabled.");
       }
       else
       {
@@ -155,12 +155,11 @@ namespace TextureManager
 
         if (envMapFaces.Any(t => t.width != envMapSize || t.height != envMapSize))
         {
-          Util.log(this,
-                   "Not all environment map faces have the same dimension. Reflections disabled.");
+          Util.log("Environment map faces have different dimensions. Reflections disabled.");
         }
         else if (envMapFaces.Any(t => !Util.isPow2(t.width) || !Util.isPow2(t.height)))
         {
-          Util.log(this, "Environment map dimensions are not powers of two. Reflections disabled.");
+          Util.log("Environment map dimensions are not powers of two. Reflections disabled.");
         }
         else
         {
@@ -174,7 +173,7 @@ namespace TextureManager
           envMap.SetPixels(envMapFaces[5].GetPixels(), CubemapFace.NegativeZ);
           envMap.Apply(true, true);
 
-          Util.log(this, "Environment map cube texture generated.");
+          Util.log("Environment map cube texture generated.");
         }
       }
 
@@ -193,11 +192,11 @@ namespace TextureManager
         shaderMaterial = new Material(shaderSource);
         shader = shaderMaterial.shader;
 
-        Util.log(this, "Visor shader sucessfully compiled.");
+        Util.log("Visor shader sucessfully compiled.");
       }
       catch (System.IO.IsolatedStorage.IsolatedStorageException)
       {
-        Util.log(this, "Visor shader loading failed. Reflections disabled.");
+        Util.log("Visor shader loading failed. Reflections disabled.");
         destroy();
         return;
       }

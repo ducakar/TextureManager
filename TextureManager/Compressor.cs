@@ -145,19 +145,19 @@ namespace TextureManager
       foreach (GameDatabase.TextureInfo Texture in GameDatabase.Instance.databaseTexture)
       {
         Texture2D texture = Texture.texture;
-        Util.log(this, "--------------------------------------------------------");
-        Util.log(this, "Name: " + texture.name);
-        Util.log(this, "Format: " + texture.format.ToString());
-        Util.log(this, "MipMaps: " + texture.mipmapCount.ToString());
-        Util.log(this, "Size: " + texture.width.ToString() + "x" + texture.height);
-        Util.log(this, "Readable: " + Texture.isReadable);
+        Util.log("--------------------------------------------------------");
+        Util.log("Name: " + texture.name);
+        Util.log("Format: " + texture.format.ToString());
+        Util.log("MipMaps: " + texture.mipmapCount.ToString());
+        Util.log("Size: " + texture.width.ToString() + "x" + texture.height);
+        Util.log("Readable: " + Texture.isReadable);
       }
       long bSaved = memorySaved;
       long kbSaved = (long) (bSaved / 1024f);
       long mbSaved = (long) (kbSaved / 1024f);
-      Util.log(this, "Memory Saved : " + bSaved.ToString() + "B");
-      Util.log(this, "Memory Saved : " + kbSaved.ToString() + "kB");
-      Util.log(this, "Memory Saved : " + mbSaved.ToString() + "MB");
+      Util.log("Memory Saved : " + bSaved.ToString() + "B");
+      Util.log("Memory Saved : " + kbSaved.ToString() + "kB");
+      Util.log("Memory Saved : " + mbSaved.ToString() + "MB");
 
       Converter.instance.DestroyImageBuffer();
     }
@@ -172,7 +172,7 @@ namespace TextureManager
         {
           if (file.fileType == UrlDir.FileType.Texture /*&& foldersList.Exists(n => file.url.StartsWith(n))*/)
           {
-            Util.log(this, "L: {0}", file.name);
+            Util.log("L: {0}", file.name);
             TexInfo t = new TexInfo(file.url);
             GameDatabase.TextureInfo Texture = UpdateTexture(t);
             GameDatabase.Instance.databaseTexture.Add(Texture);
@@ -272,7 +272,7 @@ namespace TextureManager
     {
       if (!Compressed)
       {
-        Util.log(this, "GameDatabase.Instance.databaseTexture.Count: {0}",
+        Util.log("GameDatabase.Instance.databaseTexture.Count: {0}",
                  GameDatabase.Instance.databaseTexture.Count);
       }
       if (!Compressed && GameDatabase.Instance.databaseTexture.Count > 0)
@@ -459,21 +459,21 @@ namespace TextureManager
       int.TryParse(scaleString_normals, out config_scale_normals);
       int.TryParse(max_sizeString_normals, out config_max_size_normals);
 
-      Util.log(this, "Settings:");
-      Util.log(this, "   mipmaps: " + config_mipmaps);
-      Util.log(this, "   compress: " + config_compress);
-      Util.log(this, "   scale: " + config_scale);
-      Util.log(this, "   max_size: " + config_max_size);
-      Util.log(this, "   mipmaps_normals: " + config_mipmaps_normals);
-      Util.log(this, "   compress_normals: " + config_compress_normals);
-      Util.log(this, "   scale_normals: " + config_scale_normals);
-      Util.log(this, "   max_size_normals: " + config_max_size_normals);
-      Util.log(this, "   filter_mode: " + config_filter_mode);
-      Util.log(this, "   make_not_readable: " + config_make_not_readable);
-      Util.log(this, "   normal List: ");
+      Util.log("Settings:");
+      Util.log("   mipmaps: " + config_mipmaps);
+      Util.log("   compress: " + config_compress);
+      Util.log("   scale: " + config_scale);
+      Util.log("   max_size: " + config_max_size);
+      Util.log("   mipmaps_normals: " + config_mipmaps_normals);
+      Util.log("   compress_normals: " + config_compress_normals);
+      Util.log("   scale_normals: " + config_scale_normals);
+      Util.log("   max_size_normals: " + config_max_size_normals);
+      Util.log("   filter_mode: " + config_filter_mode);
+      Util.log("   make_not_readable: " + config_make_not_readable);
+      Util.log("   normal List: ");
       foreach (String normal in normalList)
       {
-        Util.debugLog(this, "      " + normal);
+        Util.debugLog("      " + normal);
       }
     }
 
@@ -567,8 +567,8 @@ namespace TextureManager
                                    TextureFormat originalFormat, bool originalMipmaps,
                                    GameDatabase.TextureInfo Texture, String folder)
     {
-      int saved = CacheController.instance.MemorySaved(originalWidth, originalHeight,
-                                                       originalFormat, originalMipmaps, Texture);
+      int saved = CacheController.MemorySaved(originalWidth, originalHeight, originalFormat,
+                                              originalMipmaps, Texture);
       memorySaved += saved;
 
       if (!folderBytesSaved.ContainsKey(folder))
@@ -578,8 +578,8 @@ namespace TextureManager
       long folderSaved = folderBytesSaved[folder] + saved;
       folderBytesSaved[folder] = folderSaved;
 
-      Util.log(this, "Saved " + saved + "B");
-      Util.log(this, "Accumulated Saved " + memorySaved + "B");
+      Util.log("Saved " + saved + "B");
+      Util.log("Accumulated Saved " + memorySaved + "B");
     }
   }
 }

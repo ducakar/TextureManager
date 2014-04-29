@@ -21,33 +21,17 @@
  */
 
 using System;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace TextureManager
 {
-  class Util
+  internal class Util
   {
-    public static readonly string DIR = "TextureManager/";
-    public static readonly string PATH = KSPUtil.ApplicationRootPath + "GameData/" + DIR;
     private static readonly char[] CONFIG_DELIMITERS = { ' ', ',' };
+    public static readonly string DIR = typeof(Util).Namespace + "/";
+    public static readonly string PATH = KSPUtil.ApplicationRootPath + "GameData/" + DIR;
     public static bool isDebug = false;
-
-    /**
-     * Print a log entry for TextureManager. `String.Format()`-style formatting is supported.
-     */
-    public static void log(object sender, string s, params object[] args)
-    {
-      Debug.Log("[TM." + sender.GetType().Name + "] " + String.Format(s, args));
-    }
-
-    /**
-     * Print a debug entry for TextureManager. `String.Format()`-style formatting is supported.
-     */
-    public static void debugLog(object sender, string s, params object[] args)
-    {
-      if (isDebug)
-        Debug.Log("[TM." + sender.GetType().Name + "] " + String.Format(s, args));
-    }
 
     /**
      * True iff `i` is a power of two.
@@ -63,6 +47,27 @@ namespace TextureManager
     public static string[] splitConfigValue(string value)
     {
       return value.Split(CONFIG_DELIMITERS, StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    /**
+     * Print a log entry. `String.Format()`-style formatting is supported.
+     */
+    public static void log(string s, params object[] args)
+    {
+      Type callerClass = new StackTrace(1, false).GetFrame(0).GetMethod().DeclaringType;
+      UnityEngine.Debug.Log("[TM." + callerClass.Name + "] " + String.Format(s, args));
+    }
+
+    /**
+     * Print a debug entry. `String.Format()`-style formatting is supported.
+     */
+    public static void debugLog(string s, params object[] args)
+    {
+      if (isDebug)
+      {
+        Type callerClass = new StackTrace(1, false).GetFrame(0).GetMethod().DeclaringType;
+        UnityEngine.Debug.Log("[TM." + callerClass.Name + "] " + String.Format(s, args));
+      }
     }
   }
 }

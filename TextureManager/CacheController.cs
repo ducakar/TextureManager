@@ -84,19 +84,19 @@ namespace TextureManager
           {
             if (cacheHash != hashString)
             {
-              Util.debugLog(this, cacheHash + " != " + hashString);
+              Util.debugLog(cacheHash + " != " + hashString);
             }
             if (cacheIsNorm != Texture.isNormalMap)
             {
-              Util.debugLog(this, cacheIsNorm + " != " + Texture.isNormalMap);
+              Util.debugLog(cacheIsNorm + " != " + Texture.isNormalMap);
             }
             if (Texture.resizeWidth != cacheWidth)
             {
-              Util.debugLog(this, Texture.resizeWidth + " != " + cacheWidth);
+              Util.debugLog(Texture.resizeWidth + " != " + cacheWidth);
             }
             if (Texture.resizeHeight != cacheHeight)
             {
-              Util.debugLog(this, Texture.resizeHeight + " != " + cacheHeight);
+              Util.debugLog(Texture.resizeHeight + " != " + cacheHeight);
             }
             return RebuildCache(Texture, compress, mipmaps, makeNotReadable);
           }
@@ -106,7 +106,7 @@ namespace TextureManager
           }
           else
           {
-            Util.debugLog(this, "Loading from cache... " + textureName);
+            Util.debugLog("Loading from cache... " + textureName);
             Texture.needsResize = false;
             Texture2D newTex = new Texture2D(4, 4);
             GameDatabase.TextureInfo cacheTexture =
@@ -140,9 +140,9 @@ namespace TextureManager
                                                   bool makeNotReadable)
     {
       Texture.loadOriginalFirst = true;
-      Util.debugLog(this, "Loading texture...");
+      Util.debugLog("Loading texture...");
       Converter.instance.GetReadable(Texture, mipmaps);
-      Util.debugLog(this, "Texture loaded.");
+      Util.debugLog("Texture loaded.");
 
       GameDatabase.TextureInfo cacheTexture = Texture.texture;
       Texture2D tex = cacheTexture.texture;
@@ -151,35 +151,35 @@ namespace TextureManager
       String cacheFile = Util.PATH + "Cache/" + textureName;
       if (Texture.needsResize)
       {
-        Util.debugLog(this, "Rebuilding Cache... " + Texture.name);
+        Util.debugLog("Rebuilding Cache... " + Texture.name);
 
-        Util.debugLog(this, "Saving cache file " + cacheFile + ".pngcache");
+        Util.debugLog("Saving cache file " + cacheFile + ".pngcache");
         Converter.WriteTo(cacheTexture.texture, cacheFile + ".pngcache");
 
         String originalTextureFile = Texture.filename;
         String cacheConfigFile = cacheFile + ".tcache";
-        Util.debugLog(this, "Created Config for" + originalTextureFile);
+        Util.debugLog("Created Config for" + originalTextureFile);
 
         String hashString = GetMD5String(originalTextureFile);
 
         ConfigNode config = new ConfigNode();
         config.AddValue("md5", hashString);
-        Util.debugLog(this, "md5: " + hashString);
+        Util.debugLog("md5: " + hashString);
         config.AddValue("orig_format", Path.GetExtension(originalTextureFile));
-        Util.debugLog(this, "orig_format: " + Path.GetExtension(originalTextureFile));
+        Util.debugLog("orig_format: " + Path.GetExtension(originalTextureFile));
         config.AddValue("orig_width", Texture.width.ToString());
-        Util.debugLog(this, "orig_width: " + Texture.width.ToString());
+        Util.debugLog("orig_width: " + Texture.width.ToString());
         config.AddValue("orig_height", Texture.height.ToString());
-        Util.debugLog(this, "orig_height: " + Texture.height.ToString());
+        Util.debugLog("orig_height: " + Texture.height.ToString());
         config.AddValue("is_normal", cacheTexture.isNormalMap.ToString());
-        Util.debugLog(this, "is_normal: " + cacheTexture.isNormalMap.ToString());
+        Util.debugLog("is_normal: " + cacheTexture.isNormalMap.ToString());
         config.AddValue("width", Texture.resizeWidth.ToString());
-        Util.debugLog(this, "width: " + Texture.resizeWidth.ToString());
+        Util.debugLog("width: " + Texture.resizeWidth.ToString());
         config.AddValue("height", Texture.resizeHeight.ToString());
-        Util.debugLog(this, "height: " + Texture.resizeHeight.ToString());
+        Util.debugLog("height: " + Texture.resizeHeight.ToString());
 
         config.Save(cacheConfigFile);
-        Util.debugLog(this, "Saved Config.");
+        Util.debugLog("Saved Config.");
       }
       else
       {
@@ -231,24 +231,24 @@ namespace TextureManager
       }
     }
 
-    public int MemorySaved(int originalWidth, int originalHeight, TextureFormat originalFormat,
-                           bool originalMipmaps, GameDatabase.TextureInfo Texture)
+    public static int MemorySaved(int originalWidth, int originalHeight, TextureFormat originalFormat,
+                                  bool originalMipmaps, GameDatabase.TextureInfo Texture)
     {
       int width = Texture.texture.width;
       int height = Texture.texture.height;
       TextureFormat format = Texture.texture.format;
       bool mipmaps = Texture.texture.mipmapCount == 1 ? false : true;
-      Util.debugLog(this, "Texture: " + Texture.name);
-      Util.debugLog(this, "is normalmap: " + Texture.isNormalMap);
+      Util.debugLog("Texture: " + Texture.name);
+      Util.debugLog("is normalmap: " + Texture.isNormalMap);
       Texture2D tex = Texture.texture;
-      Util.debugLog(this, "originalWidth: " + originalWidth);
-      Util.debugLog(this, "originalHeight: " + originalHeight);
-      Util.debugLog(this, "originalFormat: " + originalFormat);
-      Util.debugLog(this, "originalMipmaps: " + originalMipmaps);
-      Util.debugLog(this, "width: " + width);
-      Util.debugLog(this, "height: " + height);
-      Util.debugLog(this, "format: " + format);
-      Util.debugLog(this, "mipmaps: " + mipmaps);
+      Util.debugLog("originalWidth: " + originalWidth);
+      Util.debugLog("originalHeight: " + originalHeight);
+      Util.debugLog("originalFormat: " + originalFormat);
+      Util.debugLog("originalMipmaps: " + originalMipmaps);
+      Util.debugLog("width: " + width);
+      Util.debugLog("height: " + height);
+      Util.debugLog("format: " + format);
+      Util.debugLog("mipmaps: " + mipmaps);
       bool readable = true;
       try
       {
@@ -259,10 +259,10 @@ namespace TextureManager
         readable = false;
       }
       ;
-      Util.debugLog(this, "readable: " + readable);
+      Util.debugLog("readable: " + readable);
       if (readable != Texture.isReadable)
       {
-        Util.debugLog(this, "Readbility does not match!");
+        Util.debugLog("Readbility does not match!");
       }
       int oldSize = 0;
       int newSize = 0;

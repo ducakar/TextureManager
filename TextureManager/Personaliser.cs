@@ -27,7 +27,7 @@ using UnityEngine;
 
 namespace TextureManager
 {
-  public class Personaliser
+  internal class Personaliser
   {
     private enum SuitAssignment
     {
@@ -196,109 +196,119 @@ namespace TextureManager
 
       foreach (Renderer renderer in component.GetComponentsInChildren<Renderer>())
       {
-        Material material = renderer.material;
-        Texture2D newTexture = null;
-        Texture2D newNormalMap = null;
+        SkinnedMeshRenderer smr = renderer as SkinnedMeshRenderer;
 
-        switch (renderer.name)
+        // Thruster jets, flag decals and headlight flares.
+        if (smr == null)
         {
-          case "eyeballLeft":
-          case "eyeballRight":
-          case "pupilLeft":
-          case "pupilRight":
-          {
-            if (head != null && head.isEyeless)
-              renderer.enabled = false;
-
-            break;
-          }
-          case "headMesh01":
-          case "upTeeth01":
-          case "upTeeth02":
-          case "tongue":
-          {
-            if (head != null)
-            {
-              newTexture = head.head;
-              newNormalMap = head.headNRM;
-            }
-            break;
-          }
-          case "body01":
-          {
-            bool isEvaSuit = isEva && !isAtmSuit;
-
-            if (suit != null)
-            {
-              newTexture = isEvaSuit ? suit.evaSuit : suit.suit;
-              newNormalMap = isEvaSuit ? suit.evaSuitNRM : suit.suitNRM;
-            }
-
-            // This required to fix IVA suits after KSP resetting them to the stock ones all the
-            // time. If there is the default replacement for IVA suit texture and the current Kerbal
-            // skin contains no IVA suit, we must set it to the default replacement, otherwise the
-            // stock one will be used.
-            if (!isEvaSuit)
-            {
-              if (newTexture == null)
-                newTexture = defaultSuit.suit;
-              if (newNormalMap == null)
-                newNormalMap = defaultSuit.suitNRM;
-            }
-            break;
-          }
-          case "helmet":
-          {
-            if (isAtmSuit)
-            {
-              renderer.enabled = false;
-            }
-            else if (suit != null)
-            {
-              newTexture = isEva ? suit.evaHelmet : suit.helmet;
-              newNormalMap = suit.helmetNRM;
-            }
-            break;
-          }
-          case "visor":
-          {
-            if (isAtmSuit)
-            {
-              renderer.enabled = false;
-            }
-            else
-            {
-              // Visor texture must be set every time, because the replacement on proto-IVA Kerbal
-              // doesn't seem to work.
-              Suit skin = suit ?? defaultSuit;
-              newTexture = isEva ? skin.evaVisor : skin.visor;
-
-              if (newTexture != null)
-                material.color = Color.white;
-            }
-            break;
-          }
-          default: // Jetpack, thruster jets, flag decals, headlight flares and monitor snow.
-          {
-            if (isAtmSuit)
-            {
-              renderer.enabled = false;
-            }
-            // The type check excludes jets, flags, flares and monitor snow.
-            else if (suit != null && renderer.GetType() == typeof(SkinnedMeshRenderer))
-            {
-              newTexture = suit.evaJetpack;
-              newNormalMap = suit.evaJetpackNRM;
-            }
-            break;
-          }
+          if (isAtmSuit && renderer.name != "screenMessage")
+            renderer.enabled = false;
         }
+        else
+        {
+          Material material = renderer.material;
+          Texture2D newTexture = null;
+          Texture2D newNormalMap = null;
 
-        if (newTexture != null && newTexture != material.mainTexture)
-          material.mainTexture = newTexture;
+          switch (smr.name)
+          {
+            case "eyeballLeft":
+            case "eyeballRight":
+            case "pupilLeft":
+            case "pupilRight":
+            {
+              if (head != null && head.isEyeless)
+                smr.sharedMesh = null;
 
-        if (newNormalMap != null && newNormalMap != material.GetTexture("_BumpMap"))
-          material.SetTexture("_BumpMap", newNormalMap);
+              break;
+            }
+            case "headMesh01":
+            case "upTeeth01":
+            case "upTeeth02":
+            case "tongue":
+            {
+              if (head != null)
+              {
+                newTexture = head.head;
+                newNormalMap = head.headNRM;
+              }
+              break;
+            }
+            case "body01":
+            {
+              bool isEvaSuit = isEva && !isAtmSuit;
+
+              if (suit != null)
+              {
+                newTexture = isEvaSuit ? suit.evaSuit : suit.suit;
+                newNormalMap = isEvaSuit ? suit.evaSuitNRM : suit.suitNRM;
+              }
+
+              // This required to fix IVA suits after KSP resetting them to the stock ones all the
+              // time. If there is the default replacement for IVA suit texture and the current Kerbal
+              // skin contains no IVA suit, we must set it to the default replacement, otherwise the
+              // stock one will be used.
+              if (!isEvaSuit)
+              {
+                if (newTexture == null)
+                  newTexture = defaultSuit.suit;
+                if (newNormalMap == null)
+                  newNormalMap = defaultSuit.suitNRM;
+              }
+              break;
+            }
+            case "helmet":
+            {
+              if (isAtmSuit)
+              {
+                smr.sharedMesh = null;
+              }
+              else if (suit != null)
+              {
+                newTexture = isEva ? suit.evaHelmet : suit.helmet;
+                newNormalMap = suit.helmetNRM;
+              }
+              break;
+            }
+            case "visor":
+            {
+              if (isAtmSuit)
+              {
+                smr.sharedMesh = null;
+              }
+              else
+              {
+                // Visor texture must be set every time, because the replacement on proto-IVA Kerbal
+                // doesn't seem to work.
+                Suit skin = suit ?? defaultSuit;
+                newTexture = isEva ? skin.evaVisor : skin.visor;
+
+                if (newTexture != null)
+                  material.color = Color.white;
+              }
+              break;
+            }
+            default: // Jetpack.
+            {
+              if (isAtmSuit)
+              {
+                smr.sharedMesh = null;
+              }
+              else if (suit != null)
+              {
+                newTexture = suit.evaJetpack;
+                newNormalMap = suit.evaJetpackNRM;
+              }
+              break;
+            }
+          }
+
+          if (newTexture != null && newTexture != material.mainTexture)
+            material.mainTexture = newTexture;
+
+          if (newNormalMap != null && newNormalMap != material.GetTexture("_BumpMap"))
+            material.SetTexture("_BumpMap", newNormalMap);
+        }
       }
     }
 
@@ -404,7 +414,7 @@ namespace TextureManager
                 if (customHeads.ContainsKey(name))
                 {
                   customHeads.Remove(name);
-                  Util.log(this, "Unmapped head for \"{0}\"", name);
+                  Util.log("Unmapped head for \"{0}\"", name);
                 }
               }
               else
@@ -412,10 +422,11 @@ namespace TextureManager
                 Head head = null;
                 if (headName != "DEFAULT")
                   head = heads.FirstOrDefault(h => h.name == headName);
+                if (head == null)
+                  headName = "DEFAULT";
 
                 customHeads[name] = head;
-                Util.log(this, "Mapped head for \"{0}\" -> {1}",
-                         name, head == null ? "DEFAULT" : headName);
+                Util.log("Mapped head for \"{0}\" -> {1}", name, headName);
               }
             }
 
@@ -426,7 +437,7 @@ namespace TextureManager
                 if (customSuits.ContainsKey(name))
                 {
                   customSuits.Remove(name);
-                  Util.log(this, "Unmapped suit for \"{0}\"", name);
+                  Util.log("Unmapped suit for \"{0}\"", name);
                 }
               }
               else
@@ -434,12 +445,11 @@ namespace TextureManager
                 Suit suit = null;
                 if (suitName != "DEFAULT")
                   suit = suits.FirstOrDefault(s => s.name == suitName);
+                if (suit == null)
+                  suitName = "DEFAULT";
 
                 customSuits[name] = suit;
-                Util.log(this,
-                         "Mapped suit for \"{0}\" -> {1}",
-                         name,
-                         suit == null ? "DEFAULT" : suitName);
+                Util.log("Mapped suit for \"{0}\" -> {1}", name, suitName);
               }
             }
           }
@@ -476,7 +486,7 @@ namespace TextureManager
             else if (sSuitAssignment == "consecutive")
               suitAssignment = SuitAssignment.CONSECUTIVE;
             else
-              Util.log(this, "Invalid value for suitAssignment: {0}", sSuitAssignment);
+              Util.log("Invalid value for suitAssignment: {0}", sSuitAssignment);
           }
         }
 
@@ -492,7 +502,7 @@ namespace TextureManager
             {
               Suit suit = suits.FirstOrDefault(s => s.name == suitName) ?? defaultSuit;
               cabinSuits[cabinName] = suit;
-              Util.log(this, "Mapped cabin suit for \"{0}\" -> {1}", cabinName, suit.name);
+              Util.log("Mapped cabin suit for \"{0}\" -> {1}", cabinName, suit.name);
             }
           }
         }
@@ -542,15 +552,12 @@ namespace TextureManager
         if (texture == null || !texture.name.StartsWith(Util.DIR))
           continue;
 
-        int lastSlash = texture.name.LastIndexOf('/');
-        string originalName = texture.name.Substring(lastSlash + 1);
-
         // When a TGA loading fails, IndexOutOfBounds exception is thrown and GameDatabase gets
         // corrupted. The problematic TGA is duplicated in GameDatabase so that it also overrides
         // the preceding texture.
         if (texture.name == lastTextureName)
         {
-          Util.log(this, "Corrupted GameDatabase! Problematic TGA? {0}", texture.name);
+          Util.log("Corrupted GameDatabase! Problematic TGA? {0}", texture.name);
         }
         // Add a head texture.
         else if (texture.name.StartsWith(DIR_HEADS))
@@ -566,14 +573,14 @@ namespace TextureManager
             if (head != null)
             {
               head.headNRM = texture;
-              Util.log(this, "Mapped head \"{0}\" normal map -> {1}", head.name, texture.name);
+              Util.log("Mapped head \"{0}\" normal map -> {1}", head.name, texture.name);
             }
           }
           else
           {
             Head head = new Head() { name = headName, head = texture };
             heads.Add(head);
-            Util.log(this, "Mapped head \"{0}\" -> {1}", head.name, texture.name);
+            Util.log("Mapped head \"{0}\" -> {1}", head.name, texture.name);
           }
         }
         // Add a suit texture.
@@ -581,12 +588,14 @@ namespace TextureManager
         {
           texture.wrapMode = TextureWrapMode.Clamp;
 
+          int lastSlash = texture.name.LastIndexOf('/');
           int index = suits.Count;
           int dirNameLength = lastSlash - DIR_SUITS.Length;
+          string originalName = texture.name.Substring(lastSlash + 1);
 
           if (dirNameLength < 1)
           {
-            Util.log(this, "Suit texture should be inside a subdirectory: {0}", texture.name);
+            Util.log("Suit texture should be inside a subdirectory: {0}", texture.name);
           }
           else
           {
@@ -608,20 +617,23 @@ namespace TextureManager
             }
 
             if (suit.setTexture(originalName, texture))
-              Util.log(this, "Mapped suit \"{0}\" {1} -> {2}", dirName, originalName, texture.name);
+              Util.log("Mapped suit \"{0}\" {1} -> {2}", dirName, originalName, texture.name);
             else
-              Util.log(this, "Unknown suit texture name \"{0}\": {1}", originalName, texture.name);
+              Util.log("Unknown suit texture name \"{0}\": {1}", originalName, texture.name);
           }
         }
         else if (texture.name.StartsWith(DIR_DEFAULT))
         {
+          int lastSlash = texture.name.LastIndexOf('/');
+          string originalName = texture.name.Substring(lastSlash + 1);
+
           if (originalName == "kerbalHead")
             texture.wrapMode = TextureWrapMode.Clamp;
 
           if (defaultSuit.setTexture(originalName, texture))
           {
             texture.wrapMode = TextureWrapMode.Clamp;
-            Util.log(this, "Mapped default suit {0} -> {1}", originalName, texture.name);
+            Util.log("Mapped default suit {0} -> {1}", originalName, texture.name);
           }
         }
 
@@ -633,7 +645,7 @@ namespace TextureManager
       // Check if the srf mod is present.
       isSfrDetected = AssemblyLoader.loadedAssemblies.Any(a => a.name.StartsWith("sfrPartModules"));
       if (isSfrDetected)
-        Util.log(this, "Detected sfr mod, enabling alternative Kerbal IVA texture replacement");
+        Util.log("Detected sfr mod, enabling alternative Kerbal IVA texture replacement");
 
       // Update IVA textures on vessel switch.
       GameEvents.onVesselChange.Add(delegate(Vessel v) {
@@ -669,6 +681,7 @@ namespace TextureManager
     public void resetScene()
     {
       ivaReplaceTimer = -1.0f;
+      kerbalVessels.Clear();
     }
 
     public void updateScene()
